@@ -20,7 +20,7 @@ function ask_passwd () {
     while true ; do
         read user_name
         local validator=$(echo "$user_name" | grep ":")
-        local registration_verification=`grep "$service_name"":""$user_name" ./save_location`
+        local registration_verification=$(grep "$service_name"":""$user_name" ./save_location)
         if [ "$validator" != "" ] ; then
             echo -n "':'を使用することはできません。再度ユーザー名を入力してください："
         elif [ "$registration_verification" == "" ] ; then
@@ -57,7 +57,7 @@ function provide_password () {
         fi
     done
 
-    local target=`grep "$service_name" ./save_location`
+    local target=$(grep "$service_name" ./save_location)
     target=$(echo "$target" | awk -F':' -v service_name="$service_name" '$1 == service_name')
     echo "てすと""$target"
     local hitNumber=$(echo "$target" | grep -c "$service_name")
@@ -77,7 +77,7 @@ function provide_password () {
             echo "そのサービス名は複数登録されています。下記の中からユーザー名を入力してください。"
             while true ; do
                 echo "$acounts"
-                read -p "：" acount_name
+                read -p ":" acount_name
                 target_line=$(echo "$target" | awk -F':' -v acount_name="$acount_name" '$2 == acount_name')
 
                 if [ "$target_line" != "" ] ; then
@@ -89,8 +89,9 @@ function provide_password () {
             done
         fi
         echo "サービス名："${target%%:*}
+        # shellcheck disable=SC2046
         echo "ユーザー名："$(echo "$target" | awk -F':' '{print $2}')
-        echo "パスワード："${target##*:}
+        echo "パスワード："${target##*:}"
     fi
 }
 
@@ -98,7 +99,7 @@ function provide_password () {
 echo パスワードマネージャーへようこそ！
 
 while true ; do
-    echo -n "次の選択肢から入力してください(Add Password/Get Password/Exit)："
+    echo -n "次の選択肢から入力してください(Add Password/Get Password/Exit):"
     while true ; do
         read choice
         if [ "$choice" == "Add Password" ] ; then
